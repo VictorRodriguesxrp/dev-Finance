@@ -121,6 +121,26 @@ const Utils = {
     
         return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
     },
+
+    formatPositiveNegative() {
+        const positiveNegative = Transaction.total()/100
+
+        const cardTotalBG = document.querySelector('.card.total')
+        if (positiveNegative > 0) {
+            cardTotalBG.classList.remove('negativo')
+            cardTotalBG.classList.remove('neutro')
+            cardTotalBG.classList.add('positivo')
+            
+        } else if (positiveNegative < 0) {
+            cardTotalBG.classList.remove('positivo')
+            cardTotalBG.classList.remove('neutro')
+            cardTotalBG.classList.add('negativo')
+        } else {
+            cardTotalBG.classList.remove('positivo')
+            cardTotalBG.classList.remove('negativo')
+            cardTotalBG.classList.add('neutro')
+        }
+    }
 }
 
 const Form = {
@@ -188,6 +208,7 @@ const App = {
         })
 
         DOM.updateBalance()
+        Utils.formatPositiveNegative()
         Storage.set(Transaction.all)
     },
     reload() {

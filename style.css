@@ -38,7 +38,6 @@ para que ainda sejam lindo por leitores de tela (acessibilidade) */
 
 .container {
     width: min(90vw, 800px);
-    /* background-color: blue; */
     margin: auto;
 }
 
@@ -106,14 +105,15 @@ button:hover {
 header {
     background-color: #121212;
     padding: 2rem 0 10rem; 
-    text-align: center; 
+    text-align: center;
+    color: white; 
 }
 
-#logo {
+/* #logo {
     color: deepskyblue;
     font-weight: 100;
     font-size: 4rem;
-}
+} */
 
 /* balance ==================== */
 #balance {
@@ -152,9 +152,19 @@ header {
     margin-top: 1rem;
 }
 
-.card.total {
+.neutro {
     background: #c359f5;
     color: white;
+}
+
+.negativo {
+    background-color: red;
+    color: #520707;
+}
+
+.positivo {
+    background-color: var(--lightgreen);
+    color: rgb(2, 73, 2);
 }
 
 #transaction h2 {
