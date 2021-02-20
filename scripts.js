@@ -88,7 +88,6 @@ const Transaction = {
         const transactions = Transaction.all
         const incomes = Transaction.incomes(transactions)
         const expenses = Transaction.expenses(transactions)
-        const total = Transaction.total(transactions)
 
         const currentDate = new Date()
 
@@ -124,7 +123,7 @@ const Transaction = {
                      ${itens} 
                       <tr>
                           <td colspan="2"> Total </td>
-                          <td class="valor"> ${Utils.formatCurrency(total)} </td>
+                          <td class="valor"> ${Utils.formatCurrency(incomes + expenses)} </td>
                       </tr>
                      </table>`
 
