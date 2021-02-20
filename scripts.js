@@ -124,7 +124,7 @@ const Transaction = {
                      ${itens} 
                       <tr>
                           <td colspan="2"> Total </td>
-                          <td class="valor"> ${Utils.formatCurrency(expenses)} </td>
+                          <td class="valor"> ${Utils.formatCurrency(total)} </td>
                       </tr>
                      </table>`
 
