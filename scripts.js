@@ -1,6 +1,10 @@
+let editControl
+let position
+
 const Modal = {
     //adicionar ou remover a class active
     toggle () {
+        Form.clearFields()
         document.querySelector('.modal-overlay').classList.toggle('active')
     }
 }
@@ -56,6 +60,75 @@ const Transaction = {
         let total = 0;
         total = Transaction.incomes() + Transaction.expenses();
         return total
+    },
+
+    editTransaction(index) {
+        editControl = true
+        Modal.toggle()
+        const transaction = Storage.get()
+        document.querySelector('.newTransaction').innerHTML = 'Editar Transação'
+        Form.description.value = transaction[index].description
+        Form.amount.value = (transaction[index].amount/100)
+        const dateDDMMYY = transaction[index].date.split('/')
+        position = index
+        Form.date.value = String(dateDDMMYY[2]+'-'+dateDDMMYY[1]+'-'+dateDDMMYY[0])
+    },
+
+    edit(transaction) {
+        const finalTransaction = {
+            'description': transaction.description,
+            'amount': transaction.amount,
+            'date': transaction.date
+        }
+        Transaction.all.splice(position, 1, finalTransaction)
+        App.reload()
+    },
+
+    extract() {
+        const transactions = Transaction.all
+        const incomes = Transaction.incomes(transactions)
+        const expenses = Transaction.expenses(transactions)
+        const total = Transaction.total(transactions)
+
+        const currentDate = new Date()
+
+        const date = {
+            day: currentDate.getDate(),
+            month: currentDate.getMonth(),
+            year: currentDate.getFullYear(),
+            hours: currentDate.getHours(),
+            minutes: currentDate.getMinutes(),
+            seconds: currentDate.getSeconds()
+        }
+        
+        let mes = (date.month+1).toString()
+        let mesFormatado = mes.length === 1 ? '0'+mes : mes
+        
+        let text = 'Relatorio'
+
+        let titulo = `<div> <h1> Relatório de Balanço de Finanças </h1> </div>`
+        let data  = `<div> \nData: ${date.day}/${mesFormatado}/${date.year} - ${date.hours}:${date.minutes}:${date.seconds}\n </div>`
+        let itens = ''
+
+        itens += transactions.reduce(
+            (itens, transaction) => 
+                (itens += `<tr> <td class="data">${transaction.date}</td> <td class="descricao">${
+                    transaction.description
+                }</td> <td class="valor">${Utils.formatCurrency(transaction.amount)}</td></tr>`), ""
+        )
+      
+        let tabela = `<table> 
+                      <th class="data"> Data </th>
+                      <th class="descricao"> Transação </th>
+                      <th class="valor"> Valor </th>
+                     ${itens} 
+                      <tr>
+                          <td colspan="2"> Total </td>
+                          <td class="valor"> ${Utils.formatCurrency(expenses)} </td>
+                      </tr>
+                     </table>`
+
+        Utils.downloadFile(titulo, data, tabela)
     }
 }
 
@@ -79,7 +152,10 @@ const DOM = {
         <td class="${cssClass}">${amount}</td>
         <td class="date">${transaction.date}</td>
         <td>
-            <img onclick="Transaction.remove(${index})" src="./assets/minus.svg" alt="Remover Transação">
+            <img onclick = "Transaction.editTransaction(${index})"src="./assets/edit-solid.svg" style= "cursor: pointer" alt="Editar Transação">
+        </td>
+        <td>
+            <img onclick="Transaction.remove(${index})" src="./assets/minus.svg" style="cursor:pointer" alt="Remover Transação">
         </td>
         `
         return html
@@ -140,6 +216,62 @@ const Utils = {
             cardTotalBG.classList.remove('negativo')
             cardTotalBG.classList.add('neutro')
         }
+    },
+
+    // downloadFile(data, name, type) {
+    //     const blob = new Blob([data], {
+    //         type: type
+    //     })
+
+    //     const link = window.document.createElement("a")
+    //     link.href = window.URL.createObjectURL(blob)
+    //     link.download = `${name.trim().replace(/ +/g, "-")}`
+    //     link.click()
+    //     window.URL.revokeObjectURL(link.href)
+    //     return
+    // }
+
+    downloadFile(titulo, data, tabela) {
+        let win = window.open("", "", "height=700, width=700")
+        let style = `<style>
+                   * {margin: 0;}
+
+                   ul {margin: 20px 0px;}
+
+                   table, th, td {border: solid 1px #DDD; border-collapse: collapse; padding: 2px 3px;text-align: center; margin-top: 10px; margin-bottom: 10px; width: 90%;}
+
+                   table .data {
+                       text-align: left;
+                       width: 25%;
+                   }
+
+                   table .descricao {
+                    text-align: left;
+                    width: 50%;
+                   }
+
+                   table .valor {
+                    text-align: right;
+                    width: 25%;
+                   }
+
+                   table th {
+                       color: #444;
+                   }
+
+               </style>`
+        win.document.write('<html> <head>')
+        win.document.write('<title> Extrato </title>')
+        win.document.write(style)
+        win.document.write('</head>')
+        win.document.write(`<body>`)
+        win.document.write(`${titulo}`)
+        win.document.write(`${data}`)
+        win.document.write(`${tabela}`)
+        win.document.write('</body> </html>')
+        win.document.close()
+        win.print()
+        
     }
 }
 
@@ -182,6 +314,7 @@ const Form = {
     },
 
     clearFields() {
+        document.querySelector('.newTransaction').innerHTML = 'Nova Transação'
         Form.description.value = ""
         Form.amount.value = ""
         Form.date.value = ""
@@ -191,8 +324,13 @@ const Form = {
         event.preventDefault()
         try {
             Form.validateFields()
-            const transaction = Form.formatValues()
-            Transaction.add(transaction)
+            const transaction = Form.formatValues()   
+            if (editControl) {
+                Transaction.edit(transaction)
+                editControl = false
+            } else {
+                Transaction.add(transaction)
+            }
             Form.clearFields()
             Modal.toggle() //fechando formulário
         } catch (error) {

@@ -12,6 +12,15 @@
 </head>
 
 <body>
+    <div id="change-theme">
+        <input type="checkbox" id="checkbox">
+        <label for="checkbox">
+            <i class="fas fa-sun" aria-hidden="true"></i>
+            <i class="fas fa-moon" aria-hidden="true"></i>
+            <div id="ball"></div>
+        </label>
+    </div>
+
     <header>
         <!-- <h1 id="logo">dev.finance$</h1> -->
         <img src="./assets/logo.svg" alt="Logo Dev Finance">
@@ -23,7 +32,7 @@
 
             <div class="card">
                 <h3 class="entradaSaida">
-                    <span>Entradas</span>
+                    <span id="income">Entradas</span>
                     <img src="./assets/income.svg" alt="Imagem de Entradas">
                 </h3>
                 <p id="incomeDisplay">R$ 0,00</p>
@@ -31,7 +40,7 @@
 
             <div class="card">
                 <h3 class="entradaSaida">
-                    <span>Saídas</span>
+                    <span id="expense">Saídas</span>
                     <img src="./assets/expense.svg" alt="Imagem de Saídas"> 
                 </h3>
                 <p id="expenseDisplay">R$ 0,00</p>
@@ -52,12 +61,20 @@
             <a href="#" class="button new"
                 onclick="Modal.toggle()">+ Nova Transação</a>
 
+            <a href="" class="button extract" id="gerarExtrato" 
+                onclick="Transaction.extract()">
+                <img src="./assets/gerarExtrato.svg" alt="">
+                <span>Gerar Extrato</span>
+            </a>
+                
+
             <table id="data-table">
                 <thead>
                     <tr class="description">
                         <th>Descrição</th>
                         <th>Valor</th>
                         <th>Data</th>
+                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -95,7 +112,7 @@
                             name="amount"
                             placeholder="0,00"
                         />
-                        <small class="help">Use o sinal - (negativo) para despesas e, (virgula) para casas decimais.</small>
+                        <small class="help" id="legend">Use o sinal - (negativo) para despesas e, (virgula) para casas decimais.</small>
                     </div>
 
                     <div class="input-group">
@@ -121,11 +138,29 @@
         </div>
     </div>
 
+    <section class="contacts">
+        <div class="icons">
+            <a href="https://github.com/VictorRodriguesxrp" 
+               class="icons"
+               target="_blank">
+               <i class="fab fa-github" aria-hidden="true"></i>
+            </a>
+
+            <a href="https://www.linkedin.com/in/victor-rodrigues-8b6369174/" 
+               class="icons"
+               target="_blank">
+               <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+            </a>
+        </div>
+    </section>
+
     <footer id="rodape">
         <p>Desenvolvido por Victor Rodrigues</p>
     </footer>
 
     <script src="./scripts.js"></script>
+    <script src="./changeTheme.js"></script>
+    <script src="https://kit.fontawesome.com/78f082f98d.js"></script>
 </body>
 
 </html>
